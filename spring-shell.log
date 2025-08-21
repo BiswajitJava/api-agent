@@ -1,0 +1,14 @@
+1755717646793:learn petstore https://petstore3.swagger.io/api/v3/openapi.json
+1755717679079:auth petstore api_key special-key
+1755717715587:query petstore "find all available pets, then for the first one in the list, get its full details"
+1755717922667:exit
+1755717951260:query --alias petstore --prompt "find all available pets"
+1755718414147:exit
+1755718469184:query --alias petstore --prompt "find all available pets"
+1755718790851:exit
+1755718922096:query --alias petstore --prompt "find all available pets"
+1755720121146:exit
+1755720161036:learn petstore https://petstore3.swagger.io/api/v3/openapi.json
+1755720199625:auth petstore api_key special-key
+1755720207717:query petstore "find all available pets, then for the first one in the list, get its full details"
+1755720224026:query petstore "find pet by id"
