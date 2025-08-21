@@ -12,3 +12,23 @@
 1755720199625:auth petstore api_key special-key
 1755720207717:query petstore "find all available pets, then for the first one in the list, get its full details"
 1755720224026:query petstore "find pet by id"
+1755782144140:learn --alias petstore --source https://petstore3.swagger.io/api/v3/oas.json
+1755783067876:learn --alias petstore --source https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml
+1755783849134:auth --alias petstore --type api_key --token special-key
+1755783907659:query --alias petstore --prompt "find pet with ID 10"
+1755788320896:learn --alias petstore --source https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml
+1755788334039:auth --alias petstore --type api_key --token special-key
+1755788362860:learn --alias petstore --source https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml
+1755788368399:auth --alias petstore --type api_key --token special-key
+1755788374726:query --alias petstore --prompt "find pet with ID 10"
+1755788389263:y
+1755788860711:learn --alias petstore --source https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml
+1755788867409:auth --alias petstore --type api_key --token special-key
+1755788872822:query --alias petstore --prompt "find pet with ID 10"
+1755788882655:y
+1755798077360:exit
+1755802265117:learn --alias petstore --source https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml
+1755802271748:auth --alias petstore --type api_key --token special-key
+1755802278452:query --alias petstore --prompt "find pet with ID 10"
+1755802289677:y
+1755802308068:exit

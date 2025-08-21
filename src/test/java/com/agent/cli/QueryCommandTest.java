@@ -32,7 +32,6 @@ import static org.mockito.Mockito.*;
 
 @ShellTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-// Force JLine to use a "dumb" terminal compatible with the headless test environment.
 @TestPropertySource(properties = { "spring.shell.jline.terminal.dumb=true" })
 class QueryCommandTest {
 
