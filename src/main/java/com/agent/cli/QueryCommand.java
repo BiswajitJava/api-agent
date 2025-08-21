@@ -17,6 +17,11 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
+/**
+ * A Spring Shell component for executing natural language queries against a learned API.
+ * This command orchestrates the process of creating an execution plan from a user's prompt,
+ * asking for user confirmation, and then executing the plan to interact with the API.
+ */
 @ShellComponent
 public class QueryCommand {
 
@@ -27,6 +32,15 @@ public class QueryCommand {
     private final LineReader lineReader;
     private final Spinner spinner;
 
+    /**
+     * Constructs a new QueryCommand with the required services and UI components.
+     *
+     * @param stateService      Service to retrieve persisted API specifications.
+     * @param aiPlanningService Service to generate an execution plan from a natural language prompt.
+     * @param executionEngine   Service to execute the generated plan.
+     * @param lineReader        JLine component to read user input from the console. [3, 4]
+     * @param spinner           UI component to display a spinner during long-running operations.
+     */
     public QueryCommand(StateService stateService,
                         AiPlanningService aiPlanningService,
                         ExecutionEngine executionEngine,
@@ -39,10 +53,20 @@ public class QueryCommand {
         this.spinner = spinner;
     }
 
+    /**
+     * Executes a natural language query against a specified, previously learned API.
+     * <p>
+     * This method first retrieves the API specification using the provided alias. It then uses
+     * the AI planning service to generate a multi-step execution plan based on the user's prompt.
+     * The plan is displayed to the user for confirmation. If the user approves, the execution
+     * engine runs the plan, and the final result is printed to the console as a formatted JSON.
+     *
+     * @param alias   The alias of the API to query, specified with --alias or -a.
+     * @param prompt  The natural language prompt, specified with --prompt or -p. Can be multiple words.
+     * @param verbose If true, enables detailed debug logging for the duration of the command execution.
+     */
     @ShellMethod(key = "query", value = "Executes a natural language query against a learned API.")
     public void query(
-            // --- THE DEFINITIVE FIX ---
-            // Make BOTH alias and prompt required named options. This removes all ambiguity.
             @ShellOption(value = {"--alias", "-a"}, help = "The alias of the API to query.") String alias,
             @ShellOption(value = {"--prompt", "-p"}, arity = Integer.MAX_VALUE, help = "The natural language prompt.") String[] prompt,
             @ShellOption(value = {"--verbose", "-v"}, help = "Enable verbose debug logging.", defaultValue = "false", arity = 0) boolean verbose
@@ -89,6 +113,12 @@ public class QueryCommand {
         }
     }
 
+    /**
+     * A private helper method to format a Jackson JsonNode into an indented (pretty-printed) JSON string.
+     *
+     * @param node The JsonNode to format.
+     * @return A formatted JSON string, or an error message if formatting fails.
+     */
     private String formatJson(JsonNode node) {
         try {
             return jsonMapper.writeValueAsString(node);
