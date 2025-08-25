@@ -12,18 +12,26 @@ RUN mvn clean package -DskipTests
 # Stage 2: The Final Runtime Stage
 FROM openjdk:21-slim
 
-# Create a dedicated directory for the app
 WORKDIR /app
 
-# Create a non-root user and give it ownership of the app directory
-RUN addgroup --system spring && adduser --system --ingroup spring spring
+# 1. Create the user and group first.
+RUN addgroup --system spring && adduser --system --ingroup spring --home /home/spring spring
+
+# 2. Create the data directory.
+RUN mkdir -p /app/data
+
+# 3. Copy the application JAR into the work directory.
+COPY --from=build /app/target/*.jar app.jar
+
+# 4. CRITICAL FIX: Change ownership of the ENTIRE app directory and the data directory.
+#    This ensures the running user owns its own working directory.
 RUN chown -R spring:spring /app
 
-# Switch to the non-root user
+# 5. NOW, switch to the non-root user.
 USER spring
 
-# Copy the JAR from the build stage
-COPY --from=build /app/target/*.jar app.jar
+# Set environment variables (still good practice, though not strictly needed for history anymore)
+ENV SPRING_SHELL_HISTORY_PATH=/app/data/spring-shell.log
 
 # ENTRYPOINT to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
