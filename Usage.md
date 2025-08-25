@@ -31,7 +31,8 @@ docker run -it --rm \
   -e MODEL="gpt-4-turbo" \
   -e ENCRYPTOR_PASSWORD="your-strong-secret-password" \
   -v "$(pwd)/.api-agent:/home/spring/.api-agent" \
-  api-agent```
+  api-agent
+```
 
 **Command Breakdown:**
 *   `docker run -it --rm`: Runs the container in interactive mode (`-it`) and automatically removes it when you exit (`--rm`).
@@ -75,12 +76,20 @@ shell:> auth --alias petstore --type api_key --token special-key
 ```
 
 ### `details`
-**Purpose:** Displays a detailed list of all available operations for a learned API, including HTTP methods, paths, parameters, and full request body schemas for POST/PUT requests.
-**Syntax:** `details <alias>`
+**Purpose:** Displays detailed information for a learned API. Can show all operations or focus on just one.
+**Syntax:** `details <alias> [--operation|-o <operationId>]`
+*   `alias`: The alias of the API to inspect.
+*   `--operation` or `-o`: **Optional.** The specific `operationId` you want to see details for.
 
-**Example:**
+**Example 1: List All Operations**
 ```bash
 shell:> details petstore
+```
+
+**Example 2: Get Details for a Single Operation**
+This is the new, focused way to see the required fields for creating a pet.
+```bash
+shell:> details petstore --operation addPet
 ```
 
 ### `auth-info`
@@ -140,10 +149,12 @@ shell:> auth --alias petstore --type api_key --token special-key
 > Successfully configured authentication for 'petstore'
 ```
 
-**Step 4: Inspect the `addPet` Operation to See its Fields**
+**Step 4: Find the Required Fields for the 'addPet' Operation**
+Before creating a pet, you need to know what fields are required. Use the `details` command with the `--operation` flag for a focused answer.
+
 ```bash
-shell:> details petstore
-> ... (output will be long, find the 'addPet' operation)
+shell:> details petstore --operation addPet
+> Details for Operation: addPet
 > --------------------------------------------------
 > Operation ID: addPet
 >   POST /pet
@@ -156,9 +167,10 @@ shell:> details petstore
 >     }
 > --------------------------------------------------
 ```
+This output clearly shows that `name` and `photoUrls` are the minimum required fields.
 
 **Step 5: Add a Pet Interactively**
-Now, ask the agent to add a pet without providing any details.
+Now, ask the agent to add a pet without providing any details. The agent is smart enough to ask you for the fields it needs.
 
 ```bash
 shell:> query --alias petstore --prompt "I want to add a new pet"
