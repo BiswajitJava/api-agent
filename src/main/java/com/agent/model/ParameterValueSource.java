@@ -36,9 +36,10 @@ public class ParameterValueSource {
     private Source source;
 
     /**
-     * The static value for the parameter. Only used when {@code source} is {@code STATIC}.
+     * The static value for the parameter. Can be a String, Number, or a Map/List
+     * representing a JSON object/array. Only used when {@code source} is {@code STATIC}.
      */
-    private String value;
+    private Object value;
 
     /**
      * The {@code stepId} of the preceding step to get the value from.
