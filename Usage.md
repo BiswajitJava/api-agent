@@ -87,7 +87,6 @@ shell:> details petstore
 ```
 
 **Example 2: Get Details for a Single Operation**
-This is the new, focused way to see the required fields for creating a pet.
 ```bash
 shell:> details petstore --operation addPet
 ```
@@ -103,16 +102,24 @@ shell:> auth-info petstore
 
 ### `query`
 **Purpose:** Executes a natural language prompt against a learned API.
-**Syntax:** `query --alias <alias> --prompt "<your-prompt>"`
+**Syntax:** `query --alias <alias> --prompt "<prompt>" [--autofill|-af]`
+*   `--autofill` or `-af`: **Optional.** If provided, the agent will not ask for request body fields. Instead, it will automatically generate plausible, fake data based on the API schema. This is ideal for quick tests.
 
-**Example 1: Direct (Data Provided)**
+**Example 1: Direct Execution (Data Provided)**
 ```bash
 shell:> query --alias petstore --prompt "find pet with ID 123"
 ```
 
-**Example 2: Interactive (Data Missing)**
+**Example 2: Interactive Mode (Data Missing)**
+The agent will ask for the fields it needs to build the request.
 ```bash
 shell:> query --alias petstore --prompt "add a new pet to the store"
+```
+
+**Example 3: Autofill Mode (For Testing)**
+The agent will instantly execute the request with valid, auto-generated data, without asking any questions.
+```bash
+shell:> query --alias petstore --prompt "add a new pet" --autofill
 ```
 
 ### `exit` or `quit`
@@ -122,61 +129,48 @@ shell:> query --alias petstore --prompt "add a new pet to the store"
 
 ## Full Workflow Example
 
-Here is a complete, step-by-step workflow for learning the Petstore API and adding a new pet.
-
 **Step 1: Learn the API**
 ```bash
 shell:> learn --alias petstore --source https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml
-> Successfully learned API 'petstore'
 ```
 
-**Step 2: Check Authentication Requirements**
-```bash
-shell:> auth-info petstore
-> Authentication Information for API: petstore
-> --------------------------------------------------
-> Scheme Name: api_key
->   Type: apiKey
->   Location: header
->   Header/Parameter Name: api_key
->   How to use: Use the 'auth' command with type 'api_key' and your token.
-> --------------------------------------------------
-```
-
-**Step 3: Configure Authentication**
+**Step 2: Configure Authentication**
 ```bash
 shell:> auth --alias petstore --type api_key --token special-key
-> Successfully configured authentication for 'petstore'
 ```
 
-**Step 4: Find the Required Fields for the 'addPet' Operation**
-Before creating a pet, you need to know what fields are required. Use the `details` command with the `--operation` flag for a focused answer.
+**Step 3: Test the `addPet` Endpoint Quickly with Autofill**
+You want to see if the endpoint works without manually entering data.
 
 ```bash
-shell:> details petstore --operation addPet
-> Details for Operation: addPet
-> --------------------------------------------------
-> Operation ID: addPet
->   POST /pet
->   Description: Add a new pet to the store
->   Request Body Fields (application/json):
->     {
->       "type" : "object",
->       "required_fields" : [ "name", "photoUrls" ],
->       "properties" : { ... }
->     }
-> --------------------------------------------------
+shell:> query --alias petstore --prompt "add a new pet" --autofill
 ```
-This output clearly shows that `name` and `photoUrls` are the minimum required fields.
 
-**Step 5: Add a Pet Interactively**
-Now, ask the agent to add a pet without providing any details. The agent is smart enough to ask you for the fields it needs.
+The agent will show a plan, confirm that autofill is active, and upon your approval, immediately execute the request with intelligently generated fake data.
+
+```
+> I have generated the following plan:
+>   1. The user wants to add a new pet to the store.
+>
+> -- Autofill mode is active. Request bodies will be generated automatically. --
+> Execute this plan? [y/N]: y
+> Executing plan...
+> {
+>   "id": 8432,
+>   "name": "fake-name-52",
+>   "status": "available",
+>   ...
+> }
+```
+
+**Step 4: Add a Specific Pet Interactively**
+Now you want to add a pet with real data.
 
 ```bash
 shell:> query --alias petstore --prompt "I want to add a new pet"
 ```
 
-The agent will generate a plan and then prompt you for the required information.
+The agent will prompt you for the details.
 
 ```
 > I have generated the following plan:
@@ -185,25 +179,10 @@ The agent will generate a plan and then prompt you for the required information.
 > Executing plan...
 > Please provide a value for 'name': Fido
 > Please provide a value for 'photoUrls': http://images.com/fido.jpg
-> Please provide a value for 'id': 9911
-> Please provide a value for 'status': available
+> ...
 ```
 
-The agent will then execute the API call and show you the successful response from the server.
-
-```json
-{
-  "id": 9911,
-  "name": "Fido",
-  "photoUrls": [
-    "http://images.com/fido.jpg"
-  ],
-  "tags": [],
-  "status": "available"
-}
-```
-
-**Step 6: Exit the Shell**
+**Step 5: Exit the Shell**
 ```bash
 shell:> exit
 ```
